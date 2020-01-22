@@ -15,7 +15,7 @@ namespace FantasyHockeyProjector
 
         public static void ProcessWorkbook()
         {
-            string file = @"C:\GitHub\Fantasy-Hockey-Projector\PlayerStats.xlsx";
+            string file = @"C:\GitHub\Fantasy-Hockey-Projector\Summary.xlsx";
             Console.WriteLine(file);
 
             foreach (var worksheet in Excel.Workbook.Worksheets(file))
