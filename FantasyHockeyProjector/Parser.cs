@@ -3,6 +3,7 @@ using System.Data;
 using System.IO;
 using System.Reflection;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace FantasyHockeyProjector
 {
@@ -10,7 +11,6 @@ namespace FantasyHockeyProjector
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("hello");
             ProcessWorkbook();
         }
 
@@ -20,9 +20,9 @@ namespace FantasyHockeyProjector
             Console.WriteLine(file);
             int rowTracker = 0;
             int cellTracker = 0;
-            ArrayList statCategories = new ArrayList();
-            ArrayList players = new ArrayList();
-            ArrayList statTotals = new ArrayList();
+            List<string> statCategories = new List<string>();
+            List<string> players = new List<string>();
+            List<float> statTotals = new List<float>();
             foreach (var worksheet in Excel.Workbook.Worksheets(file))
             {
                 rowTracker = 0;
@@ -34,7 +34,7 @@ namespace FantasyHockeyProjector
                     {
                         if (cellTracker == 0 && rowTracker >= 5)
                         {
-                            statCategories.Add(cell.Text);
+                            statCategories.Add(cell.Text.ToString());
                         }
                         else if(cellTracker > 0 && rowTracker >=5)
                         {
@@ -42,13 +42,21 @@ namespace FantasyHockeyProjector
                         }
                         if (rowTracker == 0 && cellTracker >= 1)
                         {
-                            players.Add(cell.Text);
+                            players.Add(cell.Text.ToString());
                         }
                         cellTracker++;
                     }
-                    statTotals.Add(individualStatTotal);
+
+                    if (rowTracker >= 5)
+                        statTotals.Add(individualStatTotal);
+
                     rowTracker++;
                 }
+            }
+            float[] statAverages = new float[statTotals.Count];
+            for(int i = 0; i < statTotals.Count; i++)
+            {
+                statAverages[i] = statTotals[i] / players.Count;
             }
         }
     }
