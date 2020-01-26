@@ -17,42 +17,46 @@ namespace FantasyHockeyProjector
         public static void ProcessWorkbook()
         {
             string file = @"C:\GitHub\Fantasy-Hockey-Projector\Summary.xlsx";
-            Console.WriteLine(file);
-            int rowTracker = 0;
-            int cellTracker = 0;
+            int rowNumber = 0;
+            int cellNumber = 0;
             List<string> statCategories = new List<string>();
-            List<string> players = new List<string>();
-            //float[] statTotals = new float[];
+            Dictionary<string, List<float>> players = new Dictionary<string, List<float>>();
             List<float> statTotals = new List<float>();
+            string playerName = "";
             foreach (var worksheet in Excel.Workbook.Worksheets(file))
             {
-                rowTracker = 0;
+                rowNumber = 0;
                 foreach (var row in worksheet.Rows) 
                 {
-                    cellTracker = 0;
-                    float individualStatTotal = 0;
+                    cellNumber = 0;
                     foreach (var cell in row.Cells)
                     {
-                        if (cellTracker >= 6 && rowTracker == 0)
+                        if (rowNumber == 0 && cellNumber >= 6)
                         {
                             statCategories.Add(cell.Text.ToString());
                         }
-                        else if(cellTracker >= 6 && rowTracker > 0)
+
+                        if (rowNumber == 1 && cellNumber >= 6)
                         {
-                            individualStatTotal += float.Parse(cell.Text);
+                            statTotals.Add(0);
                         }
-                        if (rowTracker >=1  && cellTracker == 0)
+
+                        if (rowNumber >= 1 && cellNumber == 0)
                         {
-                            players.Add(cell.Text.ToString());
+                            playerName = cell.Text.ToString();
+                            players.Add(playerName, new List<float>());
                         }
-                        else if(rowTracker >= 5 && cellTracker >= )
-                        cellTracker++;
+
+                        if (rowNumber >= 1 && cellNumber >= 6)
+                        {
+                            float statValue = float.Parse(cell.Text);
+                            players[playerName].Add(statValue);
+                            statTotals[cellNumber - 6] += statValue;
+                        }
+                        //else if(rowTracker >= 6 && cellTracker >= )
+                        cellNumber++;
                     }
-
-                    if (rowTracker >= 5)
-                        statTotals.Add(individualStatTotal);
-
-                    rowTracker++;
+                    rowNumber++;
                 }
             }
             float[] statAverages = new float[statTotals.Count];
@@ -61,6 +65,7 @@ namespace FantasyHockeyProjector
             {
                 statAverages[i] = statTotals[i] / numberOfPlayers;
             }
+
         }
     }
 }
