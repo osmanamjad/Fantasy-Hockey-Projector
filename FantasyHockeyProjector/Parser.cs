@@ -20,7 +20,7 @@ namespace FantasyHockeyProjector
             int rowNumber = 0;
             int cellNumber = 0;
             List<string> statCategories = new List<string>();
-            Dictionary<string, List<float>> players = new Dictionary<string, List<float>>();
+            Dictionary<string, List<float>> playersToStats = new Dictionary<string, List<float>>();
             List<float> statTotals = new List<float>();
             string playerName = "";
             foreach (var worksheet in Excel.Workbook.Worksheets(file))
@@ -44,13 +44,13 @@ namespace FantasyHockeyProjector
                         if (rowNumber >= 1 && cellNumber == 0)
                         {
                             playerName = cell.Text.ToString();
-                            players.Add(playerName, new List<float>());
+                            playersToStats.Add(playerName, new List<float>());
                         }
 
                         if (rowNumber >= 1 && cellNumber >= 6)
                         {
                             float statValue = float.Parse(cell.Text);
-                            players[playerName].Add(statValue);
+                            playersToStats[playerName].Add(statValue);
                             statTotals[cellNumber - 6] += statValue;
                         }
                         //else if(rowTracker >= 6 && cellTracker >= )
@@ -59,13 +59,29 @@ namespace FantasyHockeyProjector
                     rowNumber++;
                 }
             }
+
             float[] statAverages = new float[statTotals.Count];
-            int numberOfPlayers = players.Count;
+            int numberOfPlayers = playersToStats.Count;
             for(int i = 0; i < statTotals.Count; i++)
             {
                 statAverages[i] = statTotals[i] / numberOfPlayers;
             }
 
+            Dictionary<string, float> playersToValueAdded = new Dictionary<string, float>();
+            foreach (KeyValuePair<string, List<float>> entry in playersToStats)
+            {
+                float valueAdded = 0;
+                for (int i = 0; i < statAverages.Length; i++)
+                {
+                    valueAdded += entry.Value[i] - statAverages[i];
+                }
+                playersToValueAdded.Add(entry.Key, valueAdded);
+            }
+            foreach (KeyValuePair<string, float> entry in playersToValueAdded)
+            {
+                Console.WriteLine(entry);
+                // do something with entry.Value or entry.Key
+            }
         }
     }
 }
