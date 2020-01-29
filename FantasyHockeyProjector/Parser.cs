@@ -53,7 +53,6 @@ namespace FantasyHockeyProjector
                             playersToStats[playerName].Add(statValue);
                             statTotals[cellNumber - 6] += statValue;
                         }
-                        //else if(rowTracker >= 6 && cellTracker >= )
                         cellNumber++;
                     }
                     rowNumber++;
@@ -80,7 +79,6 @@ namespace FantasyHockeyProjector
             foreach (KeyValuePair<string, float> entry in playersToValueAdded)
             {
                 Console.WriteLine(entry);
-                // do something with entry.Value or entry.Key
             }
         }
     }
