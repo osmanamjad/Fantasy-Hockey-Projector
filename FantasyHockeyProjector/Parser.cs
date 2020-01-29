@@ -19,6 +19,9 @@ namespace FantasyHockeyProjector
             string file = @"C:\GitHub\Fantasy-Hockey-Projector\Summary.xlsx";
             int rowNumber = 0;
             int cellNumber = 0;
+            int firstStatColumnIndex = 6;
+            int firstStatRowIndex = 1;
+            int columnNamesRowIndex = 0;
             List<string> statCategories = new List<string>();
             Dictionary<string, List<float>> playersToStats = new Dictionary<string, List<float>>();
             List<float> statTotals = new List<float>();
@@ -31,23 +34,23 @@ namespace FantasyHockeyProjector
                     cellNumber = 0;
                     foreach (var cell in row.Cells)
                     {
-                        if (rowNumber == 0 && cellNumber >= 6)
+                        if (rowNumber == columnNamesRowIndex && cellNumber >= firstStatColumnIndex)
                         {
                             statCategories.Add(cell.Text.ToString());
                         }
 
-                        if (rowNumber == 1 && cellNumber >= 6)
+                        if (rowNumber == firstStatRowIndex && cellNumber >= firstStatColumnIndex)
                         {
                             statTotals.Add(0);
                         }
 
-                        if (rowNumber >= 1 && cellNumber == 0)
+                        if (rowNumber >= firstStatRowIndex && cellNumber == columnNamesRowIndex)
                         {
                             playerName = cell.Text.ToString();
                             playersToStats.Add(playerName, new List<float>());
                         }
 
-                        if (rowNumber >= 1 && cellNumber >= 6)
+                        if (rowNumber >= firstStatRowIndex && cellNumber >= firstStatColumnIndex)
                         {
                             float statValue = float.Parse(cell.Text);
                             playersToStats[playerName].Add(statValue);
@@ -72,7 +75,7 @@ namespace FantasyHockeyProjector
                 float valueAdded = 0;
                 for (int i = 0; i < statAverages.Length; i++)
                 {
-                    valueAdded += entry.Value[i] - statAverages[i];
+                    valueAdded += entry.Value[i] / statAverages[i];
                 }
                 playersToValueAdded.Add(entry.Key, valueAdded);
             }
