@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FantasyHockeyProjector
 {
@@ -69,6 +70,11 @@ namespace FantasyHockeyProjector
                 statAverages[i] = statTotals[i] / numberOfPlayers;
             }
 
+            Dictionary<string, float> playersToValueAdded = CalculateValuesAdded(playersToStats, statAverages);
+            SortAndPrintValuesAdded(playersToValueAdded);
+        }
+        public static Dictionary<string, float> CalculateValuesAdded(Dictionary<string, List<float>> playersToStats, float[] statAverages)
+        {
             Dictionary<string, float> playersToValueAdded = new Dictionary<string, float>();
             foreach (KeyValuePair<string, List<float>> entry in playersToStats)
             {
@@ -79,7 +85,13 @@ namespace FantasyHockeyProjector
                 }
                 playersToValueAdded.Add(entry.Key, valueAdded);
             }
-            foreach (KeyValuePair<string, float> entry in playersToValueAdded)
+            return playersToValueAdded
+        }
+        public static void SortAndPrintValuesAdded(Dictionary<string, float> playersToValueAdded)
+        {
+            var valueAddedList = playersToValueAdded.ToList();
+            valueAddedList.Sort((pair1, pair2) => pair2.Value.CompareTo(pair1.Value));
+            foreach (KeyValuePair<string, float> entry in valueAddedList)
             {
                 Console.WriteLine(entry);
             }
