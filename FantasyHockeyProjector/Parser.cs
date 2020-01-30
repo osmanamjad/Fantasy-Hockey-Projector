@@ -15,6 +15,43 @@ namespace FantasyHockeyProjector
             ProcessWorkbook();
         }
 
+        public static Dictionary<string, float> CalculateValuesAdded(Dictionary<string, List<float>> playersToStats, float[] statAverages)
+        {
+            Dictionary<string, float> playersToValueAdded = new Dictionary<string, float>();
+            foreach (KeyValuePair<string, List<float>> entry in playersToStats)
+            {
+                float valueAdded = 0;
+                for (int i = 0; i < statAverages.Length; i++)
+                {
+                    valueAdded += entry.Value[i] / statAverages[i];
+                }
+                playersToValueAdded.Add(entry.Key, valueAdded);
+            }
+            return playersToValueAdded;
+        }
+
+        public static void SortAndPrintValuesAdded(Dictionary<string, float> playersToValueAdded)
+        {
+            var valueAddedList = playersToValueAdded.ToList();
+            valueAddedList.Sort((pair1, pair2) => pair2.Value.CompareTo(pair1.Value));
+            int i = 1;
+            foreach (KeyValuePair<string, float> entry in valueAddedList)
+            {
+                Console.WriteLine(i + ". " + entry);
+                i++;
+            }
+        }
+
+        public static float[] CalculateStatAverages(int numberOfPlayers, List<float> statTotals)
+        {
+            float[] statAverages = new float[statTotals.Count];
+            for (int i = 0; i < statTotals.Count; i++)
+            {
+                statAverages[i] = statTotals[i] / numberOfPlayers;
+            }
+            return statAverages;
+        }
+
         public static void ProcessWorkbook()
         {
             string file = @"C:\GitHub\Fantasy-Hockey-Projector\Summary.xlsx";
@@ -63,39 +100,16 @@ namespace FantasyHockeyProjector
                 }
             }
 
-            float[] statAverages = new float[statTotals.Count];
             int numberOfPlayers = playersToStats.Count;
-            for(int i = 0; i < statTotals.Count; i++)
-            {
-                statAverages[i] = statTotals[i] / numberOfPlayers;
-            }
+            float[] statAverages = CalculateStatAverages(numberOfPlayers, statTotals);
 
             Dictionary<string, float> playersToValueAdded = CalculateValuesAdded(playersToStats, statAverages);
+
             SortAndPrintValuesAdded(playersToValueAdded);
         }
-        public static Dictionary<string, float> CalculateValuesAdded(Dictionary<string, List<float>> playersToStats, float[] statAverages)
-        {
-            Dictionary<string, float> playersToValueAdded = new Dictionary<string, float>();
-            foreach (KeyValuePair<string, List<float>> entry in playersToStats)
-            {
-                float valueAdded = 0;
-                for (int i = 0; i < statAverages.Length; i++)
-                {
-                    valueAdded += entry.Value[i] / statAverages[i];
-                }
-                playersToValueAdded.Add(entry.Key, valueAdded);
-            }
-            return playersToValueAdded
-        }
-        public static void SortAndPrintValuesAdded(Dictionary<string, float> playersToValueAdded)
-        {
-            var valueAddedList = playersToValueAdded.ToList();
-            valueAddedList.Sort((pair1, pair2) => pair2.Value.CompareTo(pair1.Value));
-            foreach (KeyValuePair<string, float> entry in valueAddedList)
-            {
-                Console.WriteLine(entry);
-            }
-        }
+
+
+
     }
 }
         
